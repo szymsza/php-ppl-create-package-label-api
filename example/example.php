@@ -6,8 +6,8 @@ require_once '../vendor/autoload.php';
 
 $clientId = 'XXX';
 $clientSecret = 'YYY';
-
-$ppl = new PPL($clientId, $clientSecret, true);
+// $cache = new SomeCacheImplementingPsr16();   // optionally provide an instance of your favourite PSR-16-compliant cache
+$ppl = new PPL($clientId, $clientSecret, true, /* $cache */);
 
 // Calls the API to get basic information, such as the API version or the current timee. Useful to test your connection.
 echo "<h2>Basic information</h2>";

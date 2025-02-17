@@ -1,6 +1,11 @@
 # PPL MyApi2 client in PHP
 
-PPL (Professional Parcel Logistic) recently launched a new version of their API called Create package label or MyApi2. This package allows you to connect to the API by simply providing your credentials without the need to set up OAuth. Further, it offers some helper functions for encoding requests or decoding responses.
+PPL (Professional Parcel Logistic) recently launched a new version of their API called Create package label or MyApi2.
+
+This package allows you to connect to the API by simply providing your credentials without the need to set up OAuth.
+
+Further, it offers some helper functions for encoding requests or decoding responses.
+Optionally, it can cache the token across requests when [a class implementing Psr\SimpleCache\CacheInterface](https://packagist.org/providers/psr/simple-cache-implementation) is passed. This is highly recommended since the PPL quota for requesting new tokens (12 per minute) can be easily exceeded.
 
 ## Requirements
 - PHP 7.4 or higher
@@ -23,7 +28,8 @@ However, a simple example covering frequent use cases can be found in `example/e
 $clientId = 'XXX';
 $clientSecret = 'YYY';
 $development = true;
-$ppl = new PPL($clientId, $clientSecret, $development);
+$cache = new SomeCacheImplementingPsr16();  // optional
+$ppl = new PPL($clientId, $clientSecret, $development, $cache);
 ```
 
 ### Basic connection
