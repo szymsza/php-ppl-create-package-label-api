@@ -28,7 +28,6 @@ final class PPL
      * we add a buffer that decreases the validity time for its caching.
      */
     private const TOKEN_CACHE_TTL_BUFFER = 10;  // seconds
-    private const TOKEN_CACHE_KEY = __CLASS__ . '-token';
 
     private GenericProvider $provider;
     private bool $isDevelopment;
@@ -38,6 +37,7 @@ final class PPL
      * When not passed, the class won't cache the token and the PPL limit "12 token requests per min" can be easily exceeded.
      */
     private ?CacheInterface $cache;
+    private string $tokenCacheKey;
 
 
     public function __construct(
@@ -48,6 +48,7 @@ final class PPL
     ) {
         $this->isDevelopment = $isDevelopment;
         $this->cache = $cache;
+        $this->tokenCacheKey = __CLASS__ . '-token-' . $clientId;
         $this->provider = new GenericProvider([
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
@@ -69,7 +70,7 @@ final class PPL
 
         // If there is no token but the cache is passed, try to load the token from the cache
         if ($token === null && $this->cache) {
-            $cachedToken = $this->cache->get(self::TOKEN_CACHE_KEY);
+            $cachedToken = $this->cache->get($this->tokenCacheKey);
             if ($cachedToken !== null) {
                 $token = new AccessToken($cachedToken);
             }
@@ -82,7 +83,7 @@ final class PPL
             // Save token to cache if available
             if ($this->cache) {
                 $this->cache->set(
-                    self::TOKEN_CACHE_KEY,
+                    $this->tokenCacheKey,
                     $token->jsonSerialize(),
                     $token->getExpires() - time() - self::TOKEN_CACHE_TTL_BUFFER
                 );
